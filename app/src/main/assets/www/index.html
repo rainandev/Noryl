@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#000000">
+  <title>NORYL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,300;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Palco fixo de 1920x1080: tudo fica no tamanho e na posição exatos das artes -->
+  <main id="stage">
+
+    <!-- ===== TELA 0: toque para iniciar (libera o som) ===== -->
+    <section class="tela" id="tela-inicio">
+      <p class="aviso piscando">TOQUE PARA INICIAR</p>
+    </section>
+
+    <!-- ===== TELA 1: vídeo de apresentação ===== -->
+    <section class="tela escondida" id="tela-intro">
+      <video id="intro-video" src="img/intro.mp4" playsinline webkit-playsinline x5-playsinline disablepictureinpicture disableremoteplayback preload="auto"></video>
+      <button id="pular" type="button">PULAR ›</button>
+    </section>
+
+    <!-- ===== TELA 2: título e menu ===== -->
+    <section class="tela escondida" id="tela-menu">
+      <!-- 1. Rosto -->
+      <div class="layer" id="rosto"><img src="img/fundo.png" alt=""></div>
+
+      <!-- 2. Quadros de chuva (entrada e saída com máscara) -->
+      <div class="layer entra" id="entra-cima"><div class="layer quadro" id="quadro-cima"><img src="img/quadros.png" alt=""></div></div>
+      <div class="layer entra" id="entra-baixo"><div class="layer quadro" id="quadro-baixo"><img src="img/quadros.png" alt=""></div></div>
+
+      <!-- 3. Luz no canto superior -->
+      <div class="layer" id="luz"><img src="img/luz.png" alt=""></div>
+
+      <!-- 4. Sangue -->
+      <div class="layer sangue" id="sangue-topo"><img src="img/sangue.png" alt=""></div>
+      <div class="layer sangue" id="sangue-rosto"><img src="img/sangue.png" alt=""></div>
+      <div class="layer sangue" id="sangue-canto"><img src="img/sangue.png" alt=""></div>
+
+      <!-- 5. Título: animação em vídeo, depois o PNG original -->
+      <div class="layer" id="titulo">
+        <canvas id="titulo-video" width="960" height="600"></canvas>
+        <img id="titulo-png" src="img/titulo.png" alt="">
+      </div>
+
+      <!-- 5b. Respingo de sangue por cima do N -->
+      <div class="layer sangue" id="sangue-n"><img src="img/sangue.png" alt=""></div>
+
+      <!-- 6. Menu: cada linha tem a versão normal, a pincelada e a versão em negrito -->
+      <div class="layer linha" id="linha-newgame">
+        <div class="layer pincel"><img src="img/pincel.png" alt=""></div>
+        <div class="layer normal"><img src="img/menu.png" alt=""></div>
+        <div class="layer negrito"><img src="img/bold-newgame.png" alt=""></div>
+      </div>
+      <div class="layer linha" id="linha-continue">
+        <div class="layer pincel"><img src="img/pincel.png" alt=""></div>
+        <div class="layer normal"><img src="img/menu.png" alt=""></div>
+        <div class="layer negrito"><img src="img/bold-continue.png" alt=""></div>
+      </div>
+      <div class="layer linha" id="linha-settings">
+        <div class="layer pincel"><img src="img/pincel.png" alt=""></div>
+        <div class="layer normal"><img src="img/menu.png" alt=""></div>
+        <div class="layer negrito"><img src="img/bold-settings.png" alt=""></div>
+      </div>
+      <div class="layer linha" id="linha-exit">
+        <div class="layer pincel"><img src="img/pincel.png" alt=""></div>
+        <div class="layer normal"><img src="img/menu.png" alt=""></div>
+        <div class="layer negrito"><img src="img/bold-exit.png" alt=""></div>
+      </div>
+
+      <!-- Áreas de toque invisíveis em cima de cada opção -->
+      <button class="toque-opcao" data-item="newgame"  style="top: 462px" aria-label="New Game"></button>
+      <button class="toque-opcao" data-item="continue" style="top: 582px" aria-label="Continue"></button>
+      <button class="toque-opcao" data-item="settings" style="top: 701px" aria-label="Settings"></button>
+      <button class="toque-opcao" data-item="exit"     style="top: 820px" aria-label="Exit"></button>
+    </section>
+
+    <!-- ===== Telas provisórias de cada opção ===== -->
+    <section class="tela escondida" id="tela-provisoria">
+      <p class="aviso" id="provisoria-texto"></p>
+      <p class="aviso pequeno">toque para voltar ao menu</p>
+    </section>
+
+    <!-- Cortina preta para as transições entre telas -->
+    <div id="cortina"></div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

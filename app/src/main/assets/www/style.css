@@ -1,0 +1,193 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  touch-action: manipulation;          /* sem zoom de toque duplo */
+  -webkit-user-select: none;
+          user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ====== PALCO 1920x1080 ======
+   Mesmo tamanho das artes. O script.js escala o palco inteiro para caber na tela. */
+#stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  background: #000;
+  overflow: hidden;
+  transform-origin: center;
+  transform: translate(-50%, -50%) scale(var(--scale, 1));
+}
+
+/* ====== TELAS ====== */
+.tela { position: absolute; inset: 0; }
+.tela.escondida { display: none; }
+
+.aviso {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 500px;
+  text-align: center;
+  font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 54px;
+  letter-spacing: 4px;
+  color: #d6f3ff;
+  text-shadow: 0 0 12px rgba(94, 200, 255, 0.8), 0 0 30px rgba(94, 200, 255, 0.4);
+}
+.aviso.pequeno { top: 600px; font-size: 32px; opacity: 0.6; }
+.piscando { animation: piscando 2.2s ease-in-out infinite; }
+@keyframes piscando { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+
+/* ====== VÍDEO DE APRESENTAÇÃO ====== */
+#intro-video {
+  position: absolute; inset: 0; width: 1920px; height: 1080px; background: #000;
+  pointer-events: none;            /* sem controles, sem toque no vídeo */
+}
+#intro-video::-webkit-media-controls { display: none !important; }
+#intro-video::-webkit-media-controls-enclosure { display: none !important; }
+#intro-video::-webkit-media-controls-start-playback-button { display: none !important; }
+
+#pular {
+  position: absolute;
+  right: 60px;
+  top: 50px;
+  z-index: 5;
+  padding: 14px 28px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(214, 243, 255, 0.35);
+  border-radius: 6px;
+  font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 34px;
+  letter-spacing: 3px;
+  color: rgba(214, 243, 255, 0.75);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+#pular.visivel { opacity: 1; pointer-events: auto; }
+
+/* ====== ELEMENTOS DA TELA DO MENU ======
+   Cada elemento ocupa o palco inteiro, na posição em que foi exportado. */
+.layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.layer img {
+  display: block;
+  width: 1920px;
+  height: 1080px;
+}
+
+/* 1. ROSTO: começa como a arte e se aproxima até 109,43% a partir do ponto (1342, 540) */
+#rosto {
+  opacity: 0;
+  transform-origin: 1342px 540px;
+}
+
+/* 2. QUADROS DE CHUVA
+   Saída: varredura da direita para a esquerda (borda suave de ~190px). */
+.quadro {
+  -webkit-mask-image: linear-gradient(to right, #000 46%, transparent 54%);
+          mask-image: linear-gradient(to right, #000 46%, transparent 54%);
+  -webkit-mask-size: 250% 100%;
+          mask-size: 250% 100%;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: 10% 0;
+          mask-position: 10% 0;
+}
+/* Entrada: revelado da direita para a esquerda (máscara invertida). Começa escondido. */
+.entra {
+  -webkit-mask-image: linear-gradient(to right, transparent 46%, #000 54%);
+          mask-image: linear-gradient(to right, transparent 46%, #000 54%);
+  -webkit-mask-size: 250% 100%;
+          mask-size: 250% 100%;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: 10% 0;
+          mask-position: 10% 0;
+}
+#quadro-cima  { clip-path: inset(0 0 74% 0); }
+#quadro-baixo { clip-path: inset(53% 0 0 0); }
+
+/* 3. TÍTULO
+   A animação das letras (quadros em imagem, fundo preto) é somada à tela,
+   então o preto não aparece.
+   Depois das letras formadas, o PNG original acende somando por cima enquanto o vídeo apaga:
+   as letras ficam iguais e só o brilho cresce, sem cortes. */
+#titulo { transition: transform 1.25s cubic-bezier(.55, 0, .25, 1); }
+#titulo.sobe { transform: translate(30px, -253px); }
+
+#titulo-video {
+  position: absolute; left: 0; top: 200px; width: 960px; height: 600px;
+  mix-blend-mode: screen;
+}
+#titulo-png {
+  position: absolute; inset: 0; width: 1920px; height: 1080px;
+  opacity: 0;
+  mix-blend-mode: plus-lighter;
+}
+#titulo.normal-blend #titulo-png { mix-blend-mode: normal; }
+
+/* LUZ, SANGUE, MENU: começam invisíveis; o script.js anima */
+#luz, .sangue, .linha { opacity: 0; }
+
+#sangue-topo  { clip-path: inset(0 37% 74% 37%); }
+#sangue-rosto { clip-path: inset(40% 27% 30% 57%); }
+#sangue-canto { clip-path: inset(76% 0 0 74%); }
+#sangue-n     { clip-path: inset(12% 79% 54% 0); }
+
+/* cada linha mostra só a sua faixa do PNG do menu */
+#linha-newgame  .normal, #linha-newgame  .negrito { clip-path: inset(42% 0 47% 0); }
+#linha-continue .normal, #linha-continue .negrito { clip-path: inset(53% 0 36% 0); }
+#linha-settings .normal, #linha-settings .negrito { clip-path: inset(64% 0 25% 0); }
+#linha-exit     .normal, #linha-exit     .negrito { clip-path: inset(75% 0 13% 0); }
+
+/* a pincelada é a mesma imagem, descida até a linha de cada opção */
+#linha-continue .pincel { transform: translateY(120px); }
+#linha-settings .pincel { transform: translateY(239px); }
+#linha-exit     .pincel { transform: translateY(358px); }
+
+/* SELEÇÃO: pincelada pintada da esquerda para a direita + nome em negrito */
+.pincel img { clip-path: inset(0 1779px 0 0); }
+.negrito    { opacity: 0; transition: opacity 0.06s linear 0.06s; }
+.normal     { transition: opacity 0.06s linear 0.06s; }
+.linha.ativa .negrito { opacity: 1; transition-delay: 0.03s; }
+.linha.ativa .normal  { opacity: 0; transition-delay: 0.03s; }
+
+/* áreas de toque das opções (invisíveis) */
+.toque-opcao {
+  position: absolute;
+  left: 200px;
+  width: 520px;
+  height: 112px;
+  background: transparent;
+  border: 0;
+  outline: none;
+  display: none;
+}
+.menu-ativo .toque-opcao { display: block; }
+
+/* ====== CORTINA DE TRANSIÇÃO ====== */
+#cortina {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+  z-index: 50;
+}
+#cortina.fechada { opacity: 1; pointer-events: auto; }

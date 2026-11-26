@@ -1,0 +1,46 @@
+name: Gerar APK do NORYL
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o projeto
+        uses: actions/checkout@v4
+
+      # Se o projeto foi enviado como zip (pelo celular), extrai antes de compilar
+      - name: Extrair projeto enviado em zip (se houver)
+        run: |
+          if [ -f noryl-android.zip ]; then
+            unzip -o -q noryl-android.zip -d _extraido
+            if [ -d _extraido/noryl-android ]; then cp -r _extraido/noryl-android/. .; else cp -r _extraido/. .; fi
+            rm -rf _extraido
+          fi
+          ls -la
+
+      - name: Instalar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Instalar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Compilar o APK de teste
+        run: gradle assembleDebug --no-daemon --stacktrace
+
+      - name: Renomear para NORYL-debug.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk NORYL-debug.apk
+
+      - name: Disponibilizar o APK para download
+        uses: actions/upload-artifact@v4
+        with:
+          name: NORYL-debug
+          path: NORYL-debug.apk
+          retention-days: 30

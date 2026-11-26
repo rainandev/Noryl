@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,3 +47,12 @@ jobs:
           name: NORYL-debug
           path: NORYL-debug.apk
           retention-days: 30
+
+      # Publica o APK numa página de download direto (Releases), fácil de abrir no celular
+      - name: Publicar o APK para download direto
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: teste-${{ github.run_number }}
+          name: NORYL teste ${{ github.run_number }}
+          prerelease: true
+          files: NORYL-debug.apk

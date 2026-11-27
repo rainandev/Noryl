@@ -27,29 +27,8 @@
 
     <!-- ===== TELA 2: título e menu ===== -->
     <section class="tela escondida" id="tela-menu">
-      <!-- 1. Rosto -->
-      <div class="layer" id="rosto"><img src="img/fundo.png" alt=""></div>
-
-      <!-- 2. Quadros de chuva (entrada e saída com máscara) -->
-      <div class="layer entra" id="entra-cima"><div class="layer quadro" id="quadro-cima"><img src="img/quadros.png" alt=""></div></div>
-      <div class="layer entra" id="entra-baixo"><div class="layer quadro" id="quadro-baixo"><img src="img/quadros.png" alt=""></div></div>
-
-      <!-- 3. Luz no canto superior -->
-      <div class="layer" id="luz"><img src="img/luz.png" alt=""></div>
-
-      <!-- 4. Sangue -->
-      <div class="layer sangue" id="sangue-topo"><img src="img/sangue.png" alt=""></div>
-      <div class="layer sangue" id="sangue-rosto"><img src="img/sangue.png" alt=""></div>
-      <div class="layer sangue" id="sangue-canto"><img src="img/sangue.png" alt=""></div>
-
-      <!-- 5. Título: animação em vídeo, depois o PNG original -->
-      <div class="layer" id="titulo">
-        <canvas id="titulo-video" width="960" height="600"></canvas>
-        <img id="titulo-png" src="img/titulo.png" alt="">
-      </div>
-
-      <!-- 5b. Respingo de sangue por cima do N -->
-      <div class="layer sangue" id="sangue-n"><img src="img/sangue.png" alt=""></div>
+      <!-- Cena em vídeo: rosto, quadros, título, sangue e luz (o seu vídeo do Canva) -->
+      <video id="cena" src="img/cena.mp4" muted playsinline webkit-playsinline x5-playsinline disablepictureinpicture disableremoteplayback preload="auto"></video>
 
       <!-- 6. Menu: cada linha tem a versão normal, a pincelada e a versão em negrito -->
       <div class="layer linha" id="linha-newgame">

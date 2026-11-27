@@ -90,64 +90,17 @@ html, body {
   height: 1080px;
 }
 
-/* 1. ROSTO: começa como a arte e se aproxima até 109,43% a partir do ponto (1342, 540) */
-#rosto {
-  opacity: 0;
-  transform-origin: 1342px 540px;
+/* CENA EM VÍDEO: ocupa o palco inteiro, sem controles */
+#cena {
+  position: absolute; inset: 0; width: 1920px; height: 1080px; background: #000;
+  pointer-events: none;
 }
+#cena::-webkit-media-controls { display: none !important; }
+#cena::-webkit-media-controls-enclosure { display: none !important; }
+#cena::-webkit-media-controls-start-playback-button { display: none !important; }
 
-/* 2. QUADROS DE CHUVA
-   Saída: varredura da direita para a esquerda (borda suave de ~190px). */
-.quadro {
-  -webkit-mask-image: linear-gradient(to right, #000 46%, transparent 54%);
-          mask-image: linear-gradient(to right, #000 46%, transparent 54%);
-  -webkit-mask-size: 250% 100%;
-          mask-size: 250% 100%;
-  -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
-  -webkit-mask-position: 10% 0;
-          mask-position: 10% 0;
-}
-/* Entrada: revelado da direita para a esquerda (máscara invertida). Começa escondido. */
-.entra {
-  -webkit-mask-image: linear-gradient(to right, transparent 46%, #000 54%);
-          mask-image: linear-gradient(to right, transparent 46%, #000 54%);
-  -webkit-mask-size: 250% 100%;
-          mask-size: 250% 100%;
-  -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
-  -webkit-mask-position: 10% 0;
-          mask-position: 10% 0;
-}
-#quadro-cima  { clip-path: inset(0 0 74% 0); }
-#quadro-baixo { clip-path: inset(53% 0 0 0); }
-
-/* 3. TÍTULO
-   A animação das letras (quadros em imagem, fundo preto) é somada à tela,
-   então o preto não aparece.
-   Depois das letras formadas, o PNG original acende somando por cima enquanto o vídeo apaga:
-   as letras ficam iguais e só o brilho cresce, sem cortes. */
-#titulo { transition: transform 1.25s cubic-bezier(.55, 0, .25, 1); }
-#titulo.sobe { transform: translate(30px, -253px); }
-
-#titulo-video {
-  position: absolute; left: 0; top: 200px; width: 960px; height: 600px;
-  mix-blend-mode: screen;
-}
-#titulo-png {
-  position: absolute; inset: 0; width: 1920px; height: 1080px;
-  opacity: 0;
-  mix-blend-mode: plus-lighter;
-}
-#titulo.normal-blend #titulo-png { mix-blend-mode: normal; }
-
-/* LUZ, SANGUE, MENU: começam invisíveis; o script.js anima */
-#luz, .sangue, .linha { opacity: 0; }
-
-#sangue-topo  { clip-path: inset(0 37% 74% 37%); }
-#sangue-rosto { clip-path: inset(40% 27% 30% 57%); }
-#sangue-canto { clip-path: inset(76% 0 0 74%); }
-#sangue-n     { clip-path: inset(12% 79% 54% 0); }
+/* MENU: começa invisível; o script.js anima */
+.linha { opacity: 0; }
 
 /* cada linha mostra só a sua faixa do PNG do menu */
 #linha-newgame  .normal, #linha-newgame  .negrito { clip-path: inset(42% 0 47% 0); }

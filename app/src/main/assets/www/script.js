@@ -45,8 +45,19 @@ $('tela-inicio').addEventListener('click', () => {
   if (!noApp) {
     try { pedirTelaCheia && pedirTelaCheia.call(document.documentElement).catch?.(() => {}); } catch (e) {}
   }
+  liberaVideos();
   iniciaIntro();
 }, { once: true });
+
+// No iPhone, cada vídeo com som só pode tocar se for "liberado" dentro de um toque.
+// Aqui todos os vídeos do jogo são liberados no primeiro toque.
+function liberaVideos() {
+  ['cena', 'loop-a', 'loop-b'].forEach((id) => {
+    const v = $(id);
+    const p = v.play();
+    if (p && p.then) p.then(() => { v.pause(); v.currentTime = 0; }).catch(() => {});
+  });
+}
 
 // ===================================================================
 // TELA 1 — VÍDEO DE APRESENTAÇÃO (com botão discreto de pular)
@@ -88,19 +99,23 @@ function fimDaIntro(pulou) {
 
 // ===================================================================
 // TELA 2 — CENA EM VÍDEO
-// O vídeo mostra o rosto, os quadros e o título surgindo e PAUSA aos 4,0s,
-// esperando o toque. No toque ele continua (quadros saem, rosto se aproxima,
-// título sobe, sangue, luz) e termina parado no último quadro, de fundo para o menu.
-// Os botões do menu são os elementos reais, por cima do vídeo.
+// 1,7s de tela preta depois da intro; depois o vídeo mostra o rosto, os quadros
+// e o título surgindo e PAUSA aos 3,88s (logo antes do primeiro efeito), esperando o toque.
+// No toque ele continua: efeitos, quadros saem, rosto se aproxima, título sobe, sangue, luz.
+// Quando termina, entra o fundo do menu em loop. Os botões são os elementos reais, por cima.
 // ===================================================================
-const PAUSA = 4.0;          // segundo do vídeo em que ele espera o toque
+const PRETO = 1.7;          // segundos de tela preta antes da interface
+const PAUSA = 3.88;         // segundo do vídeo em que ele espera o toque
 let podeTocarTitulo = false;
 
 function iniciaTelaTitulo() {
   const cena = $('cena');
   cena.currentTime = 0;
-  cena.play().catch(() => {});
-  pausaEm(cena, PAUSA, () => { podeTocarTitulo = true; });
+  ['loop-a', 'loop-b'].forEach((id) => $(id).load());   // deixa o loop carregando
+  at(PRETO, () => {
+    cena.play().catch(() => { cena.muted = true; cena.play(); });
+    pausaEm(cena, PAUSA, () => { podeTocarTitulo = true; });
+  });
 }
 
 // Pausa o vídeo exatamente num segundo (confere a cada quadro desenhado)
@@ -125,7 +140,7 @@ $('tela-menu').addEventListener('click', () => {
 
 // ===================================================================
 // TRANSIÇÃO PARA O MENU (no toque o vídeo continua; os botões entram por cima)
-// Tempos dos botões = tempos do vídeo de referência, contados a partir de onde o vídeo está.
+// Os tempos dos botões são os do vídeo, contados a partir de onde ele está.
 // ===================================================================
 function transicaoParaMenu() {
   const cena = $('cena');
@@ -143,7 +158,40 @@ function transicaoParaMenu() {
     // Quando o menu firma, libera os toques nas opções
     at(7.0 - agora, () => $('tela-menu').classList.add('menu-ativo'));
   }, { once: true });
-  cena.play().catch(() => {});
+  cena.addEventListener('ended', iniciaLoopDoMenu, { once: true });
+  cena.play().catch(() => { cena.muted = true; cena.play(); });
+}
+
+// Fundo do menu em loop: dois vídeos se revezam. Um pouco antes de um acabar,
+// o outro começa do zero e só aparece quando o primeiro quadro dele já está na tela.
+function iniciaLoopDoMenu() {
+  const a = $('loop-a'), b = $('loop-b');
+  let atual = a, proximo = b;
+
+  const mostra = (video, depois) => {
+    const quandoDesenhar = () => {
+      video.classList.add('visivel');
+      depois && depois();
+    };
+    if (video.requestVideoFrameCallback) video.requestVideoFrameCallback(quandoDesenhar);
+    else video.addEventListener('playing', quandoDesenhar, { once: true });
+  };
+
+  const vigia = () => {
+    if (atual.duration && atual.currentTime >= atual.duration - 0.12) {
+      const sai = atual;
+      proximo.currentTime = 0;
+      proximo.play().catch(() => { proximo.muted = true; proximo.play(); });
+      mostra(proximo, () => { sai.classList.remove('visivel'); sai.pause(); });
+      [atual, proximo] = [proximo, atual];
+    }
+    requestAnimationFrame(vigia);
+  };
+
+  a.currentTime = 0;
+  a.play().catch(() => { a.muted = true; a.play(); });
+  mostra(a, () => { $('cena').style.visibility = 'hidden'; });
+  requestAnimationFrame(vigia);
 }
 
 // ===================================================================

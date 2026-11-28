@@ -91,13 +91,17 @@ html, body {
 }
 
 /* CENA EM VÍDEO: ocupa o palco inteiro, sem controles */
-#cena {
+/* Vídeos da cena: ocupam o palco inteiro, sem controles */
+.video-cena {
   position: absolute; inset: 0; width: 1920px; height: 1080px; background: #000;
   pointer-events: none;
 }
-#cena::-webkit-media-controls { display: none !important; }
-#cena::-webkit-media-controls-enclosure { display: none !important; }
-#cena::-webkit-media-controls-start-playback-button { display: none !important; }
+.video-cena::-webkit-media-controls { display: none !important; }
+.video-cena::-webkit-media-controls-enclosure { display: none !important; }
+.video-cena::-webkit-media-controls-start-playback-button { display: none !important; }
+/* os vídeos do loop ficam escondidos até a vez deles */
+.loop { opacity: 0; }
+.loop.visivel { opacity: 1; }
 
 /* MENU: começa invisível; o script.js anima */
 .linha { opacity: 0; }

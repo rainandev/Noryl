@@ -27,8 +27,12 @@
 
     <!-- ===== TELA 2: título e menu ===== -->
     <section class="tela escondida" id="tela-menu">
-      <!-- Cena em vídeo: rosto, quadros, título, sangue e luz (o seu vídeo do Canva) -->
-      <video id="cena" src="img/cena.mp4" muted playsinline webkit-playsinline x5-playsinline disablepictureinpicture disableremoteplayback preload="auto"></video>
+      <!-- Cena em vídeo: entrada, espera do toque e transição (com os sons dos efeitos) -->
+      <video id="cena" class="video-cena" src="img/cena.mp4" playsinline webkit-playsinline x5-playsinline disablepictureinpicture disableremoteplayback preload="auto"></video>
+
+      <!-- Fundo do menu em loop: dois vídeos se revezando para não piscar na emenda -->
+      <video id="loop-a" class="video-cena loop" src="img/menu-loop.mp4" playsinline webkit-playsinline x5-playsinline disablepictureinpicture disableremoteplayback preload="auto"></video>
+      <video id="loop-b" class="video-cena loop" src="img/menu-loop.mp4" playsinline webkit-playsinline x5-playsinline disablepictureinpicture disableremoteplayback preload="auto"></video>
 
       <!-- 6. Menu: cada linha tem a versão normal, a pincelada e a versão em negrito -->
       <div class="layer linha" id="linha-newgame">
